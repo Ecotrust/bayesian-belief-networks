@@ -1,4 +1,4 @@
-from __future__ import division
+
 
 import math
 from collections import defaultdict
@@ -157,7 +157,7 @@ def discretize_gaussian(mu, stddev, buckets,
     # Now build the python fuction
     result.append('def %s(%s):' % (func_name, var_name))
     result.append('    probs = dict()')
-    for k, v in probs.iteritems():
+    for k, v in probs.items():
         result.append("    probs['%s'] = %s" % (k, v))
     result.append('    return probs[%s]' % var_name)
 
@@ -171,7 +171,7 @@ def discretize_gaussian(mu, stddev, buckets,
                                 # buckets one per arg for easy zip.
 
 
-    return '\n'.join(result), probs.keys()
+    return '\n'.join(result), list(probs.keys())
 
 
 def discretize_multivariate_guassian(
@@ -346,9 +346,9 @@ class NamedMatrix(Matrix):
 
     def set_names(self, names):
         assert len(names) in self.shape
-        self.names = dict(zip(names, range(len(names))))
+        self.names = dict(list(zip(names, list(range(len(names))))))
         self.name_ordering = names
-        self.index_to_name = dict([(v, k) for k, v in self.names.items()])
+        self.index_to_name = dict([(v, k) for k, v in list(self.names.items())])
 
     def __getitem__(self, item):
         if isinstance(item, str):

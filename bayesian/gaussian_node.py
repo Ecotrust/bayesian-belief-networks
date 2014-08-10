@@ -57,7 +57,7 @@ def build_sigma_from_std_devs(std_devs):
 
 def get_parent_from_betas(betas, child):
     '''Return all betas ending at child'''
-    return [k for k, v in betas.items() if k[0] == child]
+    return [k for k, v in list(betas.items()) if k[0] == child]
 
 
 def conditional_to_joint_sigma_2(s, C, variances, betas):

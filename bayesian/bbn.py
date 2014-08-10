@@ -1,11 +1,12 @@
-from __future__ import division
+
+
 '''Data Structures to represent a BBN as a DAG.'''
 import sys
 import copy
 import heapq
 
 from random import random, choice
-from StringIO import StringIO
+from io import StringIO
 from itertools import combinations, product
 from collections import defaultdict
 
@@ -35,7 +36,7 @@ class BBN(Graph):
     '''A Directed Acyclic Graph'''
 
     def __init__(self, nodes_dict, name=None, domains={}):
-        self.nodes = nodes_dict.values()
+        self.nodes = list(nodes_dict.values())
         self.vars_to_nodes = nodes_dict
         self.domains = domains
         # For each node we want
@@ -49,7 +50,7 @@ class BBN(Graph):
         # list is the one being modeled
         # by the function. (Unless there
         # is only one argument)
-        for variable_name, node in nodes_dict.items():
+        for variable_name, node in list(nodes_dict.items()):
             node.variable_name = variable_name
 
     def get_graphviz_source(self):
@@ -81,7 +82,7 @@ class BBN(Graph):
         normalizers = defaultdict(float)
 
         for node in self.nodes:
-            for k, v in jt.marginal(node).items():
+            for k, v in list(jt.marginal(node).items()):
                 # For a single node the
                 # key for the marginal tt always
                 # has just one argument so we
@@ -94,7 +95,7 @@ class BBN(Graph):
                     normalizers[k[0][0]] += v
 
         if kwds:
-            for k, v in marginals.iteritems():
+            for k, v in list(marginals.items()):
                 if normalizers[k[0]] != 0:
                     marginals[k] /= normalizers[k[0]]
 
@@ -109,14 +110,14 @@ class BBN(Graph):
         tab.align = 'l'
         tab.align['Marginal'] = 'r'
         tab.float_format = '%8.6f'
-        for (node, value), prob in result.items():
+        for (node, value), prob in list(result.items()):
             if kwds.get(node, '') == value:
                 tab.add_row(['%s*' % node,
                              '%s%s*%s' % (GREEN, value, NORMAL),
                              '%8.6f' % prob])
             else:
                 tab.add_row([node, value, '%8.6f' % prob])
-        print tab
+        print(tab)
 
     def draw_samples(self, query={}, n=1):
         '''query is a dict of currently evidenced
@@ -134,7 +135,7 @@ class BBN(Graph):
                 if key not in result_cache:
                     result_cache[key] = self.query(**sample)
                 result = result_cache[key]
-                var_density = [r for r in result.items()
+                var_density = [r for r in list(result.items())
                                if r[0][0]==next_node.variable_name]
                 cumulative_density = var_density[:1]
                 for key, mass in var_density[1:]:
@@ -207,7 +208,7 @@ class JoinTree(UndirectedGraph):
         # values of the bbn truth-tables that are
         # assigned to the clusters...
 
-        for clique, bbn_nodes in assignments.iteritems():
+        for clique, bbn_nodes in list(assignments.items()):
 
             tt = dict()
             vals = []
@@ -242,10 +243,10 @@ class JoinTree(UndirectedGraph):
 
         # Step 2b: Set each liklihood element ^V(v) to 1
         likelihoods = self.initial_likelihoods(assignments, bbn)
-        for clique, bbn_nodes in assignments.iteritems():
+        for clique, bbn_nodes in list(assignments.items()):
             for node in bbn_nodes:
                 if node.variable_name in evidence:
-                    for k, v in clique.potential_tt.items():
+                    for k, v in list(clique.potential_tt.items()):
                         # Encode the evidence in
                         # the clique potential...
                         for variable, value in k:
@@ -257,7 +258,7 @@ class JoinTree(UndirectedGraph):
         # TODO: Since this is the same every time we should probably
         # cache it.
         l = defaultdict(dict)
-        for clique, bbn_nodes in assignments.iteritems():
+        for clique, bbn_nodes in list(assignments.items()):
             for node in bbn_nodes:
                 for value in bbn.domains.get(
                         node.variable_name, [True, False]):
@@ -403,7 +404,7 @@ class JoinTree(UndirectedGraph):
 
         clique_node = containing_nodes[0]
         tt = defaultdict(float)
-        for k, v in clique_node.potential_tt.items():
+        for k, v in list(clique_node.potential_tt.items()):
             entry = transform(
                 k,
                 clique_node.variable_names,
@@ -532,7 +533,7 @@ class JoinTreeCliqueNode(UndirectedNode):
         # out the variables from X that are not
         # in the sepset
         tt = defaultdict(float)
-        for k, v in self.potential_tt.items():
+        for k, v in list(self.potential_tt.items()):
             entry = transform(k, self.variable_names,
                               sepset_node.variable_names)
             tt[entry] += v
@@ -543,7 +544,7 @@ class JoinTreeCliqueNode(UndirectedNode):
         # Y (the target)
         tt = dict()
 
-        for k, v in target.potential_tt.items():
+        for k, v in list(target.potential_tt.items()):
             # For each entry we multiply by
             # sepsets new value and divide
             # by sepsets old value...
@@ -722,8 +723,8 @@ def build_bbn(*args, **kwds):
     # here can break build_bbn if the
     # factors do not correctly represent
     # a BBN.
-    original_factors = get_original_factors(factor_nodes.values())
-    for factor_node in factor_nodes.values():
+    original_factors = get_original_factors(list(factor_nodes.values()))
+    for factor_node in list(factor_nodes.values()):
         factor_args = get_args(factor_node)
         parents = [original_factors[arg] for arg in
                    factor_args if original_factors[arg] != factor_node]
@@ -756,7 +757,7 @@ def make_node_func(variable_name, conditions):
         # Now for each value in
         # the conditional probabilities
         # we will add a new key
-        for value, prob in conditionals.items():
+        for value, prob in list(conditionals.items()):
             key_ = tuple(key + [(variable_name, value)])
             domain.add(value)
             tt[key_] = prob
@@ -777,7 +778,7 @@ def make_node_func(variable_name, conditions):
 def build_bbn_from_conditionals(conds):
     node_funcs = []
     domains = dict()
-    for variable_name, cond_tt in conds.items():
+    for variable_name, cond_tt in list(conds.items()):
         node_func = make_node_func(variable_name, cond_tt)
         node_funcs.append(node_func)
         domains[variable_name] = node_func._domain
@@ -805,7 +806,7 @@ def make_undirected_copy(dag):
             nodes[parent.name].neighbours.append(
                 nodes[node.name])
 
-    g = UndirectedGraph(nodes.values())
+    g = UndirectedGraph(list(nodes.values()))
     return g
 
 
@@ -854,7 +855,7 @@ def priority_func(node):
 
 def construct_priority_queue(nodes, priority_func=priority_func):
     pq = []
-    for node_name, node in nodes.iteritems():
+    for node_name, node in list(nodes.items()):
         entry = priority_func(node) + [node.name]
         heapq.heappush(pq, entry)
     return pq
