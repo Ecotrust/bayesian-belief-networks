@@ -1,4 +1,4 @@
-from __future__ import division
+
 import pytest
 
 import os
@@ -481,7 +481,7 @@ class TestBBN():
         huang_darwiche_jt.initialize_potentials(
             assignments, huang_darwiche_dag)
         for node in huang_darwiche_jt.sepset_nodes:
-            for v in node.potential_tt.values():
+            for v in list(node.potential_tt.values()):
                 assert v == 1
 
         # Note that in H&D there are two places that show
@@ -552,7 +552,7 @@ class TestBBN():
         # and only once to some cluster.
         assert set(
             [node for assignment in
-             assignments.values() for node in assignment]) == \
+             list(assignments.values()) for node in assignment]) == \
             set(
                 [node for node in huang_darwiche_dag.nodes])
 
@@ -799,11 +799,11 @@ def valid_sample(samples, query_result):
     true distribution.'''
     counts = Counter()
     for sample in samples:
-        for var, val in sample.items():
+        for var, val in list(sample.items()):
             counts[(var, val)] += 1
     # Now lets normalize for each count...
     result = True
-    for k, v in counts.items():
+    for k, v in list(counts.items()):
         counts[k] = v / len(samples)
         difference = abs(counts.get(k, 0) - query_result[k])
         if round(difference, 2) > 0.01:

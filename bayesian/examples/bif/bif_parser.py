@@ -75,8 +75,8 @@ def %(function)s(%(var)s):
                           'function': function_name,
                           'var': variable,
                           'dict': str(dict(
-                              zip(variables[variable],
-                                  map(float, match.group(1).split(", ")))))
+                              list(zip(variables[variable],
+                                  list(map(float, match.group(1).split(", ")))))))
                       }
                 )
                 infile.readline()  # }
@@ -101,7 +101,7 @@ def %(function)s(%(var)s):
                         given_values = match.group(1).split(", ")
                         for value, prob in zip(
                                 variables[variable],
-                                map(float, match.group(2).split(", "))):
+                                list(map(float, match.group(2).split(", ")))):
                             dictionary[tuple(given_values + [value])] = prob
                     write("""dictionary_%(var)s = %(dict)s
 def %(function)s(%(given)s, %(var)s):

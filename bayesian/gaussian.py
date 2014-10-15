@@ -157,7 +157,7 @@ def discretize_gaussian(mu, stddev, buckets,
     # Now build the python fuction
     result.append('def %s(%s):' % (func_name, var_name))
     result.append('    probs = dict()')
-    for k, v in probs.items():
+    for k, v in list(probs.items()):
         result.append("    probs['%s'] = %s" % (k, v))
     result.append('    return probs[%s]' % var_name)
 

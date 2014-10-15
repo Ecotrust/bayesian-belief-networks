@@ -28,4 +28,4 @@ class TestRiverExample():
 
     def test_query(self, river_graph):
         r = river_graph.query(a=7)
-        print r
+        print(r)

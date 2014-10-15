@@ -1,4 +1,4 @@
-from __future__ import division
+
 '''Simple Example Using Gaussian Variables'''
 from bayesian.gaussian_bayesian_network import gaussian, conditional_gaussian
 from bayesian.gaussian_bayesian_network import build_graph

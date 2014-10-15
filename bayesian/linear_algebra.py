@@ -135,7 +135,7 @@ class Matrix(object):
 
 def inner_product(x, y):
     assert len(x) == len(y)
-    return sum(map(lambda (x, y): x * y, zip(x, y)))
+    return sum([x_y[0] * x_y[1] for x_y in zip(x, y)])
 
 
 def zeros(size):
@@ -219,8 +219,8 @@ if __name__ == '__main__':
     my_b.rows.append([2, 3])
     my_b.rows.append([4, 5])
     m = my_a * my_b
-    print my_a * my_b
+    print(my_a * my_b)
     import ipdb; ipdb.set_trace()
     mi = m.I
-    print m
-    print mi
+    print(m)
+    print(mi)

@@ -27,7 +27,7 @@ class Graph(object):
     def export(self, filename=None, format='graphviz'):
         '''Export the graph in GraphViz dot language.'''
         if format != 'graphviz':
-            raise 'Unsupported Export Format.'
+            raise Exception('Unsupported Export Format.')
         if filename:
             fh = open(filename, 'w')
         else:
@@ -55,7 +55,7 @@ class Graph(object):
                     s.sort(reverse=True, key=lambda x:x.variable_name)
         if len(l) == len(self.nodes):
             return l
-        raise "Graph Has Cycles"
+        raise Exception("Graph Has Cycles")
 
 
 class UndirectedGraph(object):
@@ -82,7 +82,7 @@ class UndirectedGraph(object):
     def export(self, filename=None, format='graphviz'):
         '''Export the graph in GraphViz dot language.'''
         if format != 'graphviz':
-            raise 'Unsupported Export Format.'
+            raise Exception('Unsupported Export Format.')
         if filename:
             fh = open(filename, 'w')
         else:
